@@ -1,0 +1,29 @@
+CREATE DATABASE IF NOT EXISTS eventzen;
+CREATE DATABASE IF NOT EXISTS eventzen_auth;
+
+USE eventzen;
+
+CREATE TABLE IF NOT EXISTS events (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255),
+  location VARCHAR(255),
+  date VARCHAR(255),
+  capacity INT,
+  category VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userEmail VARCHAR(255),
+  eventId INT,
+  seats INT
+);
+
+USE eventzen_auth;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
+  email VARCHAR(255) UNIQUE,
+  password VARCHAR(255)
+);

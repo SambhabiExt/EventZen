@@ -1,23 +1,23 @@
-require("dotenv").config();
-
 const express = require("express");
 const cors = require("cors");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-app.use(cors());
+
 app.use(express.json());
 
-const authRoutes = require("./routes/authRoutes");
+
+app.use(cors());
+
 
 app.use("/api/auth", authRoutes);
 
-const PORT = process.env.PORT || 5001;
 
 app.get("/", (req, res) => {
-  res.send("Auth Service running");
+  res.send("Auth Service Running 🚀");
 });
 
-app.listen(PORT, () => {
-  console.log(`Auth service running on port ${PORT}`);
+app.listen(5001, () => {
+  console.log("Auth service running on port 5001");
 });

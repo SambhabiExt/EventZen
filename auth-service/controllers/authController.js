@@ -4,39 +4,56 @@ const db = require("../config/db");
 
 
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    console.log("BODY:", req.body);
 
-  const checkQuery = "SELECT * FROM users WHERE email = ?";
+    const { name, email, password } = req.body || {};
 
-  db.query(checkQuery, [email], async (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json(err);
+    if (!email || !password) {
+      return res.status(400).json({ message: "Missing email or password" });
     }
 
-    if (result.length > 0) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+    const checkQuery = "SELECT * FROM users WHERE email = ?";
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const insertQuery =
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-
-    db.query(insertQuery, [name, email, hashedPassword], (err, result) => {
+    db.query(checkQuery, [email], async (err, result) => {
       if (err) {
-        console.log(err);
+        console.log("DB ERROR:", err);
         return res.status(500).json(err);
       }
 
-      res.json({ message: "User registered successfully ✅" });
+      if (result.length > 0) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const insertQuery =
+        "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+
+      db.query(
+        insertQuery,
+        [name || "User", email, hashedPassword],
+        (err, result) => {
+          if (err) {
+            console.log("INSERT ERROR:", err);
+            return res.status(500).json(err);
+          }
+
+          res.json({ message: "User registered successfully ✅" });
+        }
+      );
     });
-  });
+  } catch (error) {
+    console.log("REGISTER CRASH:", error);
+    res.status(500).json({ message: "Server crash", error: error.message });
+  }
 };
 
 
 exports.login = (req, res) => {
   const { email, password } = req.body;
+
+  console.log("Login attempt:", email);
 
   const query = "SELECT * FROM users WHERE email = ?";
 
