@@ -28,7 +28,7 @@ app.delete("/expenses/:id", (req, res) => {
     res.json({ message: "Expense deleted" });
 });
 
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5003;
 
 app.listen(PORT, () => {
     console.log(`Budget service running on port ${PORT}`);
